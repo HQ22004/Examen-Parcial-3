@@ -1,0 +1,502 @@
+:root{
+  --bg: #14161A;
+  --panel: #1F2227;
+  --panel-border: #2C3036;
+  --text: #ECEDEE;
+  --text-soft: #9BA1A6;
+  --amber: #E8A33D;
+  --amber-dim: #6B5226;
+  --teal: #2FD9A8;
+  --teal-dim: #16523F;
+  --red: #E5484D;
+  --red-dim: #5C2226;
+
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+}
+
+*{ box-sizing: border-box; }
+
+/* ---------- FALLBACK DE UTILIDADES ESTRUCTURALES ----------
+   El mecanismo de "un nivel a la vez" depende de .d-none. Estas reglas
+   se definen aquí por si el CDN de Bootstrap no carga (red restringida,
+   laboratorio sin internet, etc.). Si Bootstrap sí carga correctamente,
+   estas reglas son redundantes y no generan ningún conflicto visual. */
+.d-none{ display: none !important; }
+.container{ width: 100%; max-width: 880px; margin: 0 auto; padding: 0 16px; }
+.d-flex{ display: flex !important; }
+.flex-wrap{ flex-wrap: wrap !important; }
+.gap-2{ gap: 0.5rem !important; }
+.text-center{ text-align: center !important; }
+.w-100{ width: 100% !important; }
+.mt-2{ margin-top: 0.5rem !important; }
+.mt-3{ margin-top: 1rem !important; }
+.mt-4{ margin-top: 1.5rem !important; }
+.row{ display: flex; flex-wrap: wrap; margin: 0 -10px; }
+.row > [class*="col-"]{ padding: 0 10px; }
+.col-6{ flex: 0 0 50%; max-width: 50%; }
+@media (min-width: 768px){
+  .col-md-3{ flex: 0 0 25%; max-width: 25%; }
+  .col-md-6{ flex: 0 0 50%; max-width: 50%; }
+}
+.btn{
+  display: inline-block;
+  font-family: var(--font-body);
+  cursor: pointer;
+  text-align: center;
+  user-select: none;
+}
+.btn:disabled{ cursor: not-allowed; }
+.card{ background: var(--panel); }
+.card-header, .card-body{ padding: 14px 18px; }
+.bg-transparent{ background: transparent !important; }
+.progress{ overflow: hidden; }
+.progress-bar{
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.2s ease;
+  white-space: nowrap;
+}
+
+body{
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.vault-bg{
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(232,163,61,0.07), transparent 40%),
+    radial-gradient(circle at 85% 90%, rgba(47,217,168,0.06), transparent 40%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.018) 0px, rgba(255,255,255,0.018) 1px, transparent 1px, transparent 28px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.018) 0px, rgba(255,255,255,0.018) 1px, transparent 1px, transparent 28px);
+}
+
+/* ---------- HEADER ---------- */
+.app-header{
+  padding: 56px 0 28px;
+  text-align: center;
+}
+.app-header .eyebrow{
+  font-family: var(--font-mono);
+  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  color: var(--amber);
+  margin-bottom: 10px;
+}
+.app-header h1{
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+.app-header .subtitle{
+  color: var(--text-soft);
+  max-width: 620px;
+  margin: 0 auto;
+  font-size: 0.98rem;
+}
+
+/* ---------- VAULT DIAL / STEPPER ---------- */
+.dial-container{
+  margin-bottom: 36px;
+}
+.vault-dial{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+  gap: 0;
+}
+.dial-node{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 64px;
+}
+.dial-circle{
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 2px solid var(--amber-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text-soft);
+  background: var(--panel);
+  transition: all 0.35s ease;
+  position: relative;
+}
+.dial-check{ display: none; }
+.dial-node.active .dial-circle{
+  border-color: var(--amber);
+  color: var(--amber);
+  box-shadow: 0 0 0 4px rgba(232,163,61,0.12), 0 0 16px rgba(232,163,61,0.35);
+}
+.dial-node.completed .dial-circle{
+  border-color: var(--teal);
+  background: var(--teal-dim);
+  color: var(--teal);
+}
+.dial-node.completed .dial-num{ display: none; }
+.dial-node.completed .dial-check{ display: inline; }
+.dial-label{
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  font-family: var(--font-mono);
+}
+.dial-node.active .dial-label{ color: var(--amber); }
+.dial-node.completed .dial-label{ color: var(--teal); }
+.dial-bar{
+  width: 48px;
+  height: 2px;
+  background: var(--panel-border);
+  margin-bottom: 24px;
+  transition: background 0.35s ease;
+}
+.dial-bar.filled{ background: var(--teal); }
+
+@media (max-width: 576px){
+  .dial-bar{ width: 18px; }
+}
+
+/* ---------- MAIN / TERMINAL CARD ---------- */
+.main-content{
+  max-width: 880px;
+  padding-bottom: 80px;
+}
+.terminal-card{
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  display: flex;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+}
+.terminal-rail{
+  width: 86px;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, rgba(232,163,61,0.12), rgba(232,163,61,0.02));
+  border-right: 1px solid var(--panel-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px 0;
+}
+.rail-num{
+  font-family: var(--font-mono);
+  color: var(--amber);
+  font-size: 1.6rem;
+  font-weight: 600;
+  writing-mode: vertical-rl;
+  letter-spacing: 0.1em;
+}
+.rail-icon{ font-size: 1.4rem; opacity: 0.85; }
+
+.terminal-body{
+  padding: 32px 30px;
+  flex: 1;
+  min-width: 0;
+}
+.level-eyebrow{
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  color: var(--amber);
+  margin-bottom: 6px;
+}
+.terminal-body h2{
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+}
+.level-desc{
+  color: var(--text-soft);
+  margin-bottom: 22px;
+  max-width: 56ch;
+}
+.level-footer{
+  border-top: 1px dashed var(--panel-border);
+  padding-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ---------- BUTTONS ---------- */
+.btn-vault{
+  background: var(--amber);
+  color: #1A1304;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+}
+.btn-vault:hover{ background: #f0b25a; color: #1A1304; }
+
+.btn-vault-outline{
+  background: transparent;
+  color: var(--amber);
+  border: 1px solid var(--amber-dim);
+  border-radius: 8px;
+  padding: 9px 18px;
+}
+.btn-vault-outline:hover{ border-color: var(--amber); color: var(--amber); background: rgba(232,163,61,0.08); }
+.btn-vault-outline:disabled{ opacity: 0.4; }
+
+.btn-vault-success{
+  background: var(--teal);
+  color: #052E22;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+}
+.btn-vault-success:disabled{
+  background: var(--panel-border);
+  color: var(--text-soft);
+}
+
+/* ---------- STATUS / ALERTS ---------- */
+.status-box{
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--panel-border);
+}
+.status-box.status-info{ border-color: var(--amber-dim); color: var(--amber); background: rgba(232,163,61,0.06); }
+.status-box.status-error{ border-color: var(--red-dim); color: var(--red); background: rgba(229,72,77,0.08); }
+.status-box.status-success{ border-color: var(--teal-dim); color: var(--teal); background: rgba(47,217,168,0.08); }
+
+/* ---------- COORDS READOUT ---------- */
+.coords-readout{
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.coord-item{
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 12px 18px;
+  min-width: 180px;
+}
+.coord-label{
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-soft);
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+.coord-value{
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  color: var(--teal);
+}
+
+/* ---------- CANVAS (NIVEL 2) ---------- */
+.canvas-wrap{
+  background: #0D0F12;
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 10px;
+  overflow-x: auto;
+}
+#map-canvas{
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 640px;
+  border-radius: 6px;
+}
+
+/* ---------- CAMERA (NIVEL 3) ---------- */
+.camera-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 640px){
+  .camera-grid{ grid-template-columns: 1fr; }
+}
+.camera-pane{
+  background: #0D0F12;
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 10px;
+  position: relative;
+}
+.pane-label{
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  color: var(--text-soft);
+  margin-bottom: 8px;
+}
+#camera-stream{
+  width: 100%;
+  border-radius: 6px;
+  background: #000;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+}
+.photo-frame{
+  width: 100%;
+  aspect-ratio: 4/3;
+  border-radius: 6px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.photo-frame img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photo-placeholder{
+  color: var(--text-soft);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+/* ---------- PROGRESS BAR ---------- */
+.vault-progress{
+  height: 22px;
+  background: #0D0F12;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+}
+.vault-progress .progress-bar{
+  background: linear-gradient(90deg, var(--amber), var(--teal));
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #11140f;
+}
+
+/* ---------- HEARTBEAT (proves the UI thread is alive while the Worker runs) ---------- */
+.heartbeat{
+  display: inline-block;
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--teal);
+  opacity: 0.85;
+}
+
+/* ---------- STATS CARDS ---------- */
+.stats-card .card{
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+}
+.stats-card .card-header{
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  color: var(--amber);
+  border-bottom: 1px solid var(--panel-border);
+  background: rgba(255,255,255,0.02);
+}
+.stat-cell{
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--panel-border);
+}
+.stat-label{
+  font-size: 0.7rem;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.stat-value{
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  color: var(--teal);
+  margin-top: 2px;
+}
+
+.top10-title{
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--amber);
+  margin-bottom: 8px;
+}
+.top10-list{
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  color: var(--text);
+  padding-left: 20px;
+}
+.top10-list li{ padding: 2px 0; }
+
+/* ---------- SUCCESS SCREEN ---------- */
+.success-card{
+  justify-content: center;
+  padding: 20px 0;
+}
+.success-card .terminal-body{
+  padding: 60px 30px;
+}
+.success-glyph{
+  font-size: 4rem;
+  color: var(--teal);
+  margin: 18px 0;
+  text-shadow: 0 0 30px rgba(47,217,168,0.5);
+}
+.success-meta{
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-soft);
+  letter-spacing: 0.02em;
+}
+
+/* ---------- FOOTER ---------- */
+.app-footer{
+  border-top: 1px solid var(--panel-border);
+  padding: 18px 0;
+  text-align: center;
+  color: var(--text-soft);
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+}
+
+/* ---------- Accessibility ---------- */
+.btn-vault:focus-visible,
+.btn-vault-outline:focus-visible,
+.btn-vault-success:focus-visible{
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ transition: none !important; }
+}
